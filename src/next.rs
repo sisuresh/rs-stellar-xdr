@@ -56,6 +56,22 @@ use core::{array::TryFromSliceError, fmt, fmt::Debug, marker::Sized, ops::Deref,
 #[cfg(feature = "std")]
 use core::marker::PhantomData;
 
+/* mod base64 {
+    use serde::{Serialize, Deserialize};
+    use serde::{Deserializer, Serializer};
+
+    pub fn serialize<S: Serializer>(v: &Vec<u8>, s: S) -> Result<S::Ok, S::Error> {
+        let base64 = base64::encode(v);
+        String::serialize(&base64, s)
+    }
+    
+    pub fn deserialize<'de, D: Deserializer<'de>>(d: D) -> Result<Vec<u8>, D::Error> {
+        let base64 = String::deserialize(d)?;
+        base64::decode(base64.as_bytes())
+            .map_err(|e| serde::de::Error::custom(e))
+    }
+}
+ */
 // When feature alloc is turned off use static lifetime Box and Vec types.
 #[cfg(not(feature = "alloc"))]
 mod noalloc {
@@ -532,6 +548,23 @@ impl<T: WriteXdr, const N: usize> WriteXdr for [T; N] {
             t.write_xdr(w)?;
         }
         Ok(())
+    }
+}
+
+#[cfg(feature = "serde")]
+mod base64 {
+    use serde::{Serialize, Deserialize};
+    use serde::{Deserializer, Serializer};
+
+    pub fn serialize<S: Serializer>(v: &Vec<u8>, s: S) -> Result<S::Ok, S::Error> {
+        let base64 = base64::encode(v);
+        String::serialize(&base64, s)
+    }
+    
+    pub fn deserialize<'de, D: Deserializer<'de>>(d: D) -> Result<Vec<u8>, D::Error> {
+        let base64 = String::deserialize(d)?;
+        base64::decode(base64.as_bytes())
+            .map_err(|e| serde::de::Error::custom(e))
     }
 }
 
@@ -29086,6 +29119,11 @@ pub enum ScVal {
     I32(i32),
     Static(ScStatic),
     Object(Option<ScObject>),
+    #[cfg_attr(
+        all(feature = "serde", feature = "alloc"),
+        derive(serde::Serialize, serde::Deserialize),
+        serde(with="base64")
+    )]
     Symbol(VecM<u8, 10>),
     Bitset(u64),
     Status(ScStatus),
@@ -30003,6 +30041,11 @@ pub enum ScObject {
     Map(ScMap),
     U64(u64),
     I64(i64),
+    #[cfg_attr(
+        all(feature = "serde", feature = "alloc"),
+        derive(serde::Serialize, serde::Deserialize),
+        serde(with="base64")
+    )]
     Binary(VecM<u8, 256000>),
     BigInt(ScBigInt),
     Hash(ScHash),
