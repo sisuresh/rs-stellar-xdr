@@ -31,7 +31,7 @@ pub const XDR_FILES_SHA256: [(&str, &str); 9] = [
     ),
     (
         "xdr/next/Stellar-ledger-entries.x",
-        "d1c0b58d2134370a6dfa57ef509dccc5de5d1950bcbdad22ccc6c640046f79f2",
+        "8892c92e62f8e043e2283ab629e8ec7e7e1e508f3ea8968cd25f6d9ba2bd566f",
     ),
     (
         "xdr/next/Stellar-ledger.x",
@@ -43,7 +43,7 @@ pub const XDR_FILES_SHA256: [(&str, &str); 9] = [
     ),
     (
         "xdr/next/Stellar-transaction.x",
-        "a7dbe0ad9e3f2625c876bb5b2c2bd5e5c358ace0023dce066321afbfb031e6f4",
+        "c237771b405dac0ee36862691423014d4a75dfe2c02768888423988e593f3115",
     ),
     (
         "xdr/next/Stellar-types.x",
@@ -7967,7 +7967,8 @@ impl WriteXdr for LedgerKey {
 //        ENVELOPE_TYPE_OP_ID = 6,
 //        ENVELOPE_TYPE_POOL_REVOKE_OP_ID = 7,
 //        ENVELOPE_TYPE_CONTRACT_ID_FROM_ED25519 = 8,
-//        ENVELOPE_TYPE_CONTRACT_ID_FROM_CONTRACT = 9
+//        ENVELOPE_TYPE_CONTRACT_ID_FROM_CONTRACT = 9,
+//        ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET = 10
 //    };
 //
 // enum
@@ -7990,6 +7991,7 @@ pub enum EnvelopeType {
     PoolRevokeOpId = 7,
     ContractIdFromEd25519 = 8,
     ContractIdFromContract = 9,
+    ContractIdFromAsset = 10,
 }
 
 impl EnvelopeType {
@@ -8006,12 +8008,13 @@ impl EnvelopeType {
             Self::PoolRevokeOpId => "PoolRevokeOpId",
             Self::ContractIdFromEd25519 => "ContractIdFromEd25519",
             Self::ContractIdFromContract => "ContractIdFromContract",
+            Self::ContractIdFromAsset => "ContractIdFromAsset",
         }
     }
 
     #[must_use]
-    pub const fn variants() -> [EnvelopeType; 10] {
-        const VARIANTS: [EnvelopeType; 10] = [
+    pub const fn variants() -> [EnvelopeType; 11] {
+        const VARIANTS: [EnvelopeType; 11] = [
             EnvelopeType::TxV0,
             EnvelopeType::Scp,
             EnvelopeType::Tx,
@@ -8022,6 +8025,7 @@ impl EnvelopeType {
             EnvelopeType::PoolRevokeOpId,
             EnvelopeType::ContractIdFromEd25519,
             EnvelopeType::ContractIdFromContract,
+            EnvelopeType::ContractIdFromAsset,
         ];
         VARIANTS
     }
@@ -8036,7 +8040,7 @@ impl Name for EnvelopeType {
 
 impl Variants<EnvelopeType> for EnvelopeType {
     fn variants() -> slice::Iter<'static, EnvelopeType> {
-        const VARIANTS: [EnvelopeType; 10] = EnvelopeType::variants();
+        const VARIANTS: [EnvelopeType; 11] = EnvelopeType::variants();
         VARIANTS.iter()
     }
 }
@@ -8064,6 +8068,7 @@ impl TryFrom<i32> for EnvelopeType {
             7 => EnvelopeType::PoolRevokeOpId,
             8 => EnvelopeType::ContractIdFromEd25519,
             9 => EnvelopeType::ContractIdFromContract,
+            10 => EnvelopeType::ContractIdFromAsset,
             #[allow(unreachable_patterns)]
             _ => return Err(Error::Invalid),
         };
@@ -17187,6 +17192,8 @@ impl WriteXdr for HashIdPreimageContractId {
 //            Hash contractID;
 //            uint256 salt;
 //        } contractID;
+//    case ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET:
+//        Asset fromAsset;
 //    };
 //
 // union with discriminant EnvelopeType
@@ -17203,6 +17210,7 @@ pub enum HashIdPreimage {
     PoolRevokeOpId(HashIdPreimageRevokeId),
     ContractIdFromEd25519(HashIdPreimageEd25519ContractId),
     ContractIdFromContract(HashIdPreimageContractId),
+    ContractIdFromAsset(Asset),
 }
 
 impl HashIdPreimage {
@@ -17213,6 +17221,7 @@ impl HashIdPreimage {
             Self::PoolRevokeOpId(_) => "PoolRevokeOpId",
             Self::ContractIdFromEd25519(_) => "ContractIdFromEd25519",
             Self::ContractIdFromContract(_) => "ContractIdFromContract",
+            Self::ContractIdFromAsset(_) => "ContractIdFromAsset",
         }
     }
 
@@ -17224,16 +17233,18 @@ impl HashIdPreimage {
             Self::PoolRevokeOpId(_) => EnvelopeType::PoolRevokeOpId,
             Self::ContractIdFromEd25519(_) => EnvelopeType::ContractIdFromEd25519,
             Self::ContractIdFromContract(_) => EnvelopeType::ContractIdFromContract,
+            Self::ContractIdFromAsset(_) => EnvelopeType::ContractIdFromAsset,
         }
     }
 
     #[must_use]
-    pub const fn variants() -> [EnvelopeType; 4] {
-        const VARIANTS: [EnvelopeType; 4] = [
+    pub const fn variants() -> [EnvelopeType; 5] {
+        const VARIANTS: [EnvelopeType; 5] = [
             EnvelopeType::OpId,
             EnvelopeType::PoolRevokeOpId,
             EnvelopeType::ContractIdFromEd25519,
             EnvelopeType::ContractIdFromContract,
+            EnvelopeType::ContractIdFromAsset,
         ];
         VARIANTS
     }
@@ -17255,7 +17266,7 @@ impl Discriminant<EnvelopeType> for HashIdPreimage {
 
 impl Variants<EnvelopeType> for HashIdPreimage {
     fn variants() -> slice::Iter<'static, EnvelopeType> {
-        const VARIANTS: [EnvelopeType; 4] = HashIdPreimage::variants();
+        const VARIANTS: [EnvelopeType; 5] = HashIdPreimage::variants();
         VARIANTS.iter()
     }
 }
@@ -17278,6 +17289,7 @@ impl ReadXdr for HashIdPreimage {
             EnvelopeType::ContractIdFromContract => {
                 Self::ContractIdFromContract(HashIdPreimageContractId::read_xdr(r)?)
             }
+            EnvelopeType::ContractIdFromAsset => Self::ContractIdFromAsset(Asset::read_xdr(r)?),
             #[allow(unreachable_patterns)]
             _ => return Err(Error::Invalid),
         };
@@ -17295,6 +17307,7 @@ impl WriteXdr for HashIdPreimage {
             Self::PoolRevokeOpId(v) => v.write_xdr(w)?,
             Self::ContractIdFromEd25519(v) => v.write_xdr(w)?,
             Self::ContractIdFromContract(v) => v.write_xdr(w)?,
+            Self::ContractIdFromAsset(v) => v.write_xdr(w)?,
         };
         Ok(())
     }
