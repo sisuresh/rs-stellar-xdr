@@ -55,7 +55,7 @@ pub const XDR_FILES_SHA256: [(&str, &str); 13] = [
     ),
     (
         "xdr/next/Stellar-ledger.x",
-        "cf936606885dd265082e553aa433c2cf47b720b6d58839b154cf71096b885d1e",
+        "f65fdf75046f2e82068b0a4b8b05d4351003acf5e4aa4069ee77ae1777287cea",
     ),
     (
         "xdr/next/Stellar-overlay.x",
@@ -67,7 +67,7 @@ pub const XDR_FILES_SHA256: [(&str, &str); 13] = [
     ),
     (
         "xdr/next/Stellar-types.x",
-        "d37a4b8683d2ddb9f13f6d8a4e5111dfe7de4176516db52bc0517ec46a82c3d4",
+        "4d7a1d1f1fa0034ddbff27d8a533e59b6154bef295306c6256066def77a5a999",
     ),
 ];
 
@@ -25922,6 +25922,8 @@ impl WriteXdr for TransactionEvent {
 /// {
 ///     ExtensionPoint ext;
 ///
+///     LedgerEntryChanges txChangesBeforeBefore;
+///
 ///     LedgerEntryChanges txChangesBefore;  // tx level changes before operations
 ///                                          // are applied if any
 ///     OperationMetaV2 operations<>;        // meta for each operation
@@ -25948,6 +25950,7 @@ impl WriteXdr for TransactionEvent {
 #[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
 pub struct TransactionMetaV4 {
     pub ext: ExtensionPoint,
+    pub tx_changes_before_before: LedgerEntryChanges,
     pub tx_changes_before: LedgerEntryChanges,
     pub operations: VecM<OperationMetaV2>,
     pub tx_changes_after: LedgerEntryChanges,
@@ -25962,6 +25965,7 @@ impl ReadXdr for TransactionMetaV4 {
         r.with_limited_depth(|r| {
             Ok(Self {
                 ext: ExtensionPoint::read_xdr(r)?,
+                tx_changes_before_before: LedgerEntryChanges::read_xdr(r)?,
                 tx_changes_before: LedgerEntryChanges::read_xdr(r)?,
                 operations: VecM::<OperationMetaV2>::read_xdr(r)?,
                 tx_changes_after: LedgerEntryChanges::read_xdr(r)?,
@@ -25978,6 +25982,7 @@ impl WriteXdr for TransactionMetaV4 {
     fn write_xdr<W: Write>(&self, w: &mut Limited<W>) -> Result<(), Error> {
         w.with_limited_depth(|w| {
             self.ext.write_xdr(w)?;
+            self.tx_changes_before_before.write_xdr(w)?;
             self.tx_changes_before.write_xdr(w)?;
             self.operations.write_xdr(w)?;
             self.tx_changes_after.write_xdr(w)?;

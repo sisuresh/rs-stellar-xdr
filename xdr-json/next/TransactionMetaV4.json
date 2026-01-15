@@ -1,7 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "title": "TransactionMetaV4",
+<<<<<<< Updated upstream
   "description": "TransactionMetaV4 is an XDR Struct defined as:\n\n```text struct TransactionMetaV4 { ExtensionPoint ext;\n\nLedgerEntryChanges txChangesBefore;  // tx level changes before operations // are applied if any OperationMetaV2 operations<>;        // meta for each operation LedgerEntryChanges txChangesAfter;   // tx level changes after operations are // applied if any SorobanTransactionMetaV2* sorobanMeta; // Soroban-specific meta (only for // Soroban transactions).\n\nTransactionEvent events<>; // Used for transaction-level events (like fee payment) DiagnosticEvent diagnosticEvents<>; // Used for all diagnostic information }; ```",
+=======
+  "description": "TransactionMetaV4 is an XDR Struct defines as:\n\n```text struct TransactionMetaV4 { ExtensionPoint ext;\n\nLedgerEntryChanges txChangesBeforeBefore;\n\nLedgerEntryChanges txChangesBefore;  // tx level changes before operations // are applied if any OperationMetaV2 operations<>;        // meta for each operation LedgerEntryChanges txChangesAfter;   // tx level changes after operations are // applied if any SorobanTransactionMetaV2* sorobanMeta; // Soroban-specific meta (only for // Soroban transactions).\n\nTransactionEvent events<>; // Used for transaction-level events (like fee payment) DiagnosticEvent diagnosticEvents<>; // Used for all diagnostic information }; ```",
+>>>>>>> Stashed changes
   "type": "object",
   "required": [
     "diagnostic_events",
@@ -9,7 +13,8 @@
     "ext",
     "operations",
     "tx_changes_after",
-    "tx_changes_before"
+    "tx_changes_before",
+    "tx_changes_before_before"
   ],
   "properties": {
     "$schema": {
@@ -53,6 +58,9 @@
       "$ref": "#/definitions/LedgerEntryChanges"
     },
     "tx_changes_before": {
+      "$ref": "#/definitions/LedgerEntryChanges"
+    },
+    "tx_changes_before_before": {
       "$ref": "#/definitions/LedgerEntryChanges"
     }
   },
