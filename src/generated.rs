@@ -55,11 +55,11 @@ pub const XDR_FILES_SHA256: [(&str, &str); 13] = [
     ),
     (
         "xdr/Stellar-ledger-entries.x",
-        "f3407720eb6348b141cf1d03993c9ef2a8896521fc711bdc212bf32ba92e63c9",
+        "3e212dab2177c86c0a0a439dd870f4e71dda70472930f17096f48b9507e4ef1a",
     ),
     (
         "xdr/Stellar-ledger.x",
-        "93cdd4dd597d9f0b271762c2f3c81be8562e2004f4f019f539ca7d7e92167099",
+        "4c09454575c291e41b8f514255562a261f8f1cdefa7e8a20062b1108571621b5",
     ),
     (
         "xdr/Stellar-overlay.x",
@@ -67,7 +67,7 @@ pub const XDR_FILES_SHA256: [(&str, &str); 13] = [
     ),
     (
         "xdr/Stellar-transaction.x",
-        "52815125acb35d8aa7bfe979df1f6028a81c25cef13d2f7645b23b299792bede",
+        "840ee5f5216c8e35ded4590e2976d246fa5f8b4e60670051b8373e7282c20278",
     ),
     (
         "xdr/Stellar-types.x",
@@ -4696,6 +4696,9 @@ pub use stellar_value_type::*;
 mod ledger_close_value_signature;
 #[allow(unused_imports)]
 pub use ledger_close_value_signature::*;
+mod stellar_value_proposed_value;
+#[allow(unused_imports)]
+pub use stellar_value_proposed_value::*;
 mod stellar_value_ext;
 #[allow(unused_imports)]
 pub use stellar_value_ext::*;
@@ -5776,6 +5779,8 @@ pub enum TypeVariant {
     LedgerCloseValueSignature,
     StellarValue,
     StellarValueExt,
+    #[cfg(feature = "cap_0083")]
+    StellarValueProposedValue,
     LedgerHeaderFlags,
     LedgerHeaderExtensionV1,
     LedgerHeaderExtensionV1Ext,
@@ -5916,9 +5921,7 @@ pub enum TypeVariant {
     SorobanAuthorizedFunction,
     SorobanAuthorizedInvocation,
     SorobanAddressCredentials,
-    #[cfg(feature = "cap_0071")]
     SorobanDelegateSignature,
-    #[cfg(feature = "cap_0071")]
     SorobanAddressCredentialsWithDelegates,
     SorobanCredentialsType,
     SorobanCredentials,
@@ -5934,7 +5937,6 @@ pub enum TypeVariant {
     HashIdPreimageRevokeId,
     HashIdPreimageContractId,
     HashIdPreimageSorobanAuthorization,
-    #[cfg(feature = "cap_0071")]
     HashIdPreimageSorobanAuthorizationWithAddress,
     MemoType,
     Memo,
@@ -6256,6 +6258,8 @@ impl TypeVariant {
         TypeVariant::LedgerCloseValueSignature,
         TypeVariant::StellarValue,
         TypeVariant::StellarValueExt,
+        #[cfg(feature = "cap_0083")]
+        TypeVariant::StellarValueProposedValue,
         TypeVariant::LedgerHeaderFlags,
         TypeVariant::LedgerHeaderExtensionV1,
         TypeVariant::LedgerHeaderExtensionV1Ext,
@@ -6396,9 +6400,7 @@ impl TypeVariant {
         TypeVariant::SorobanAuthorizedFunction,
         TypeVariant::SorobanAuthorizedInvocation,
         TypeVariant::SorobanAddressCredentials,
-        #[cfg(feature = "cap_0071")]
         TypeVariant::SorobanDelegateSignature,
-        #[cfg(feature = "cap_0071")]
         TypeVariant::SorobanAddressCredentialsWithDelegates,
         TypeVariant::SorobanCredentialsType,
         TypeVariant::SorobanCredentials,
@@ -6414,7 +6416,6 @@ impl TypeVariant {
         TypeVariant::HashIdPreimageRevokeId,
         TypeVariant::HashIdPreimageContractId,
         TypeVariant::HashIdPreimageSorobanAuthorization,
-        #[cfg(feature = "cap_0071")]
         TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress,
         TypeVariant::MemoType,
         TypeVariant::Memo,
@@ -6743,6 +6744,8 @@ impl TypeVariant {
         "LedgerCloseValueSignature",
         "StellarValue",
         "StellarValueExt",
+        #[cfg(feature = "cap_0083")]
+        "StellarValueProposedValue",
         "LedgerHeaderFlags",
         "LedgerHeaderExtensionV1",
         "LedgerHeaderExtensionV1Ext",
@@ -6883,9 +6886,7 @@ impl TypeVariant {
         "SorobanAuthorizedFunction",
         "SorobanAuthorizedInvocation",
         "SorobanAddressCredentials",
-        #[cfg(feature = "cap_0071")]
         "SorobanDelegateSignature",
-        #[cfg(feature = "cap_0071")]
         "SorobanAddressCredentialsWithDelegates",
         "SorobanCredentialsType",
         "SorobanCredentials",
@@ -6901,7 +6902,6 @@ impl TypeVariant {
         "HashIdPreimageRevokeId",
         "HashIdPreimageContractId",
         "HashIdPreimageSorobanAuthorization",
-        #[cfg(feature = "cap_0071")]
         "HashIdPreimageSorobanAuthorizationWithAddress",
         "MemoType",
         "Memo",
@@ -7238,6 +7238,8 @@ impl TypeVariant {
             Self::LedgerCloseValueSignature => "LedgerCloseValueSignature",
             Self::StellarValue => "StellarValue",
             Self::StellarValueExt => "StellarValueExt",
+            #[cfg(feature = "cap_0083")]
+            Self::StellarValueProposedValue => "StellarValueProposedValue",
             Self::LedgerHeaderFlags => "LedgerHeaderFlags",
             Self::LedgerHeaderExtensionV1 => "LedgerHeaderExtensionV1",
             Self::LedgerHeaderExtensionV1Ext => "LedgerHeaderExtensionV1Ext",
@@ -7384,9 +7386,7 @@ impl TypeVariant {
             Self::SorobanAuthorizedFunction => "SorobanAuthorizedFunction",
             Self::SorobanAuthorizedInvocation => "SorobanAuthorizedInvocation",
             Self::SorobanAddressCredentials => "SorobanAddressCredentials",
-            #[cfg(feature = "cap_0071")]
             Self::SorobanDelegateSignature => "SorobanDelegateSignature",
-            #[cfg(feature = "cap_0071")]
             Self::SorobanAddressCredentialsWithDelegates => {
                 "SorobanAddressCredentialsWithDelegates"
             }
@@ -7404,7 +7404,6 @@ impl TypeVariant {
             Self::HashIdPreimageRevokeId => "HashIdPreimageRevokeId",
             Self::HashIdPreimageContractId => "HashIdPreimageContractId",
             Self::HashIdPreimageSorobanAuthorization => "HashIdPreimageSorobanAuthorization",
-            #[cfg(feature = "cap_0071")]
             Self::HashIdPreimageSorobanAuthorizationWithAddress => {
                 "HashIdPreimageSorobanAuthorizationWithAddress"
             }
@@ -7798,6 +7797,10 @@ impl TypeVariant {
             }
             Self::StellarValue => gen.into_root_schema_for::<StellarValue>(),
             Self::StellarValueExt => gen.into_root_schema_for::<StellarValueExt>(),
+            #[cfg(feature = "cap_0083")]
+            Self::StellarValueProposedValue => {
+                gen.into_root_schema_for::<StellarValueProposedValue>()
+            }
             Self::LedgerHeaderFlags => gen.into_root_schema_for::<LedgerHeaderFlags>(),
             Self::LedgerHeaderExtensionV1 => gen.into_root_schema_for::<LedgerHeaderExtensionV1>(),
             Self::LedgerHeaderExtensionV1Ext => {
@@ -8006,11 +8009,9 @@ impl TypeVariant {
             Self::SorobanAddressCredentials => {
                 gen.into_root_schema_for::<SorobanAddressCredentials>()
             }
-            #[cfg(feature = "cap_0071")]
             Self::SorobanDelegateSignature => {
                 gen.into_root_schema_for::<SorobanDelegateSignature>()
             }
-            #[cfg(feature = "cap_0071")]
             Self::SorobanAddressCredentialsWithDelegates => {
                 gen.into_root_schema_for::<SorobanAddressCredentialsWithDelegates>()
             }
@@ -8038,7 +8039,6 @@ impl TypeVariant {
             Self::HashIdPreimageSorobanAuthorization => {
                 gen.into_root_schema_for::<HashIdPreimageSorobanAuthorization>()
             }
-            #[cfg(feature = "cap_0071")]
             Self::HashIdPreimageSorobanAuthorizationWithAddress => {
                 gen.into_root_schema_for::<HashIdPreimageSorobanAuthorizationWithAddress>()
             }
@@ -8472,6 +8472,8 @@ impl core::str::FromStr for TypeVariant {
             "LedgerCloseValueSignature" => Ok(Self::LedgerCloseValueSignature),
             "StellarValue" => Ok(Self::StellarValue),
             "StellarValueExt" => Ok(Self::StellarValueExt),
+            #[cfg(feature = "cap_0083")]
+            "StellarValueProposedValue" => Ok(Self::StellarValueProposedValue),
             "LedgerHeaderFlags" => Ok(Self::LedgerHeaderFlags),
             "LedgerHeaderExtensionV1" => Ok(Self::LedgerHeaderExtensionV1),
             "LedgerHeaderExtensionV1Ext" => Ok(Self::LedgerHeaderExtensionV1Ext),
@@ -8624,9 +8626,7 @@ impl core::str::FromStr for TypeVariant {
             "SorobanAuthorizedFunction" => Ok(Self::SorobanAuthorizedFunction),
             "SorobanAuthorizedInvocation" => Ok(Self::SorobanAuthorizedInvocation),
             "SorobanAddressCredentials" => Ok(Self::SorobanAddressCredentials),
-            #[cfg(feature = "cap_0071")]
             "SorobanDelegateSignature" => Ok(Self::SorobanDelegateSignature),
-            #[cfg(feature = "cap_0071")]
             "SorobanAddressCredentialsWithDelegates" => {
                 Ok(Self::SorobanAddressCredentialsWithDelegates)
             }
@@ -8644,7 +8644,6 @@ impl core::str::FromStr for TypeVariant {
             "HashIdPreimageRevokeId" => Ok(Self::HashIdPreimageRevokeId),
             "HashIdPreimageContractId" => Ok(Self::HashIdPreimageContractId),
             "HashIdPreimageSorobanAuthorization" => Ok(Self::HashIdPreimageSorobanAuthorization),
-            #[cfg(feature = "cap_0071")]
             "HashIdPreimageSorobanAuthorizationWithAddress" => {
                 Ok(Self::HashIdPreimageSorobanAuthorizationWithAddress)
             }
@@ -8986,6 +8985,8 @@ pub enum Type {
     LedgerCloseValueSignature(Box<LedgerCloseValueSignature>),
     StellarValue(Box<StellarValue>),
     StellarValueExt(Box<StellarValueExt>),
+    #[cfg(feature = "cap_0083")]
+    StellarValueProposedValue(Box<StellarValueProposedValue>),
     LedgerHeaderFlags(Box<LedgerHeaderFlags>),
     LedgerHeaderExtensionV1(Box<LedgerHeaderExtensionV1>),
     LedgerHeaderExtensionV1Ext(Box<LedgerHeaderExtensionV1Ext>),
@@ -9126,9 +9127,7 @@ pub enum Type {
     SorobanAuthorizedFunction(Box<SorobanAuthorizedFunction>),
     SorobanAuthorizedInvocation(Box<SorobanAuthorizedInvocation>),
     SorobanAddressCredentials(Box<SorobanAddressCredentials>),
-    #[cfg(feature = "cap_0071")]
     SorobanDelegateSignature(Box<SorobanDelegateSignature>),
-    #[cfg(feature = "cap_0071")]
     SorobanAddressCredentialsWithDelegates(Box<SorobanAddressCredentialsWithDelegates>),
     SorobanCredentialsType(Box<SorobanCredentialsType>),
     SorobanCredentials(Box<SorobanCredentials>),
@@ -9144,7 +9143,6 @@ pub enum Type {
     HashIdPreimageRevokeId(Box<HashIdPreimageRevokeId>),
     HashIdPreimageContractId(Box<HashIdPreimageContractId>),
     HashIdPreimageSorobanAuthorization(Box<HashIdPreimageSorobanAuthorization>),
-    #[cfg(feature = "cap_0071")]
     HashIdPreimageSorobanAuthorizationWithAddress(
         Box<HashIdPreimageSorobanAuthorizationWithAddress>,
     ),
@@ -9468,6 +9466,8 @@ impl Type {
         TypeVariant::LedgerCloseValueSignature,
         TypeVariant::StellarValue,
         TypeVariant::StellarValueExt,
+        #[cfg(feature = "cap_0083")]
+        TypeVariant::StellarValueProposedValue,
         TypeVariant::LedgerHeaderFlags,
         TypeVariant::LedgerHeaderExtensionV1,
         TypeVariant::LedgerHeaderExtensionV1Ext,
@@ -9608,9 +9608,7 @@ impl Type {
         TypeVariant::SorobanAuthorizedFunction,
         TypeVariant::SorobanAuthorizedInvocation,
         TypeVariant::SorobanAddressCredentials,
-        #[cfg(feature = "cap_0071")]
         TypeVariant::SorobanDelegateSignature,
-        #[cfg(feature = "cap_0071")]
         TypeVariant::SorobanAddressCredentialsWithDelegates,
         TypeVariant::SorobanCredentialsType,
         TypeVariant::SorobanCredentials,
@@ -9626,7 +9624,6 @@ impl Type {
         TypeVariant::HashIdPreimageRevokeId,
         TypeVariant::HashIdPreimageContractId,
         TypeVariant::HashIdPreimageSorobanAuthorization,
-        #[cfg(feature = "cap_0071")]
         TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress,
         TypeVariant::MemoType,
         TypeVariant::Memo,
@@ -9955,6 +9952,8 @@ impl Type {
         "LedgerCloseValueSignature",
         "StellarValue",
         "StellarValueExt",
+        #[cfg(feature = "cap_0083")]
+        "StellarValueProposedValue",
         "LedgerHeaderFlags",
         "LedgerHeaderExtensionV1",
         "LedgerHeaderExtensionV1Ext",
@@ -10095,9 +10094,7 @@ impl Type {
         "SorobanAuthorizedFunction",
         "SorobanAuthorizedInvocation",
         "SorobanAddressCredentials",
-        #[cfg(feature = "cap_0071")]
         "SorobanDelegateSignature",
-        #[cfg(feature = "cap_0071")]
         "SorobanAddressCredentialsWithDelegates",
         "SorobanCredentialsType",
         "SorobanCredentials",
@@ -10113,7 +10110,6 @@ impl Type {
         "HashIdPreimageRevokeId",
         "HashIdPreimageContractId",
         "HashIdPreimageSorobanAuthorization",
-        #[cfg(feature = "cap_0071")]
         "HashIdPreimageSorobanAuthorizationWithAddress",
         "MemoType",
         "Memo",
@@ -11028,6 +11024,12 @@ impl Type {
                     r,
                 )?)))
             }),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => r.with_limited_depth(|r| {
+                Ok(Self::StellarValueProposedValue(Box::new(
+                    StellarValueProposedValue::read_xdr(r)?,
+                )))
+            }),
             TypeVariant::LedgerHeaderFlags => r.with_limited_depth(|r| {
                 Ok(Self::LedgerHeaderFlags(Box::new(
                     LedgerHeaderFlags::read_xdr(r)?,
@@ -11662,13 +11664,11 @@ impl Type {
                     SorobanAddressCredentials::read_xdr(r)?,
                 )))
             }),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => r.with_limited_depth(|r| {
                 Ok(Self::SorobanDelegateSignature(Box::new(
                     SorobanDelegateSignature::read_xdr(r)?,
                 )))
             }),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => r.with_limited_depth(|r| {
                 Ok(Self::SorobanAddressCredentialsWithDelegates(Box::new(
                     SorobanAddressCredentialsWithDelegates::read_xdr(r)?,
@@ -11738,7 +11738,6 @@ impl Type {
                     HashIdPreimageSorobanAuthorization::read_xdr(r)?,
                 )))
             }),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => {
                 r.with_limited_depth(|r| {
                     Ok(Self::HashIdPreimageSorobanAuthorizationWithAddress(
@@ -13156,6 +13155,11 @@ impl Type {
                 ReadXdrIter::<_, StellarValueExt>::new(&mut r.inner, r.limits.clone())
                     .map(|r| r.map(|t| Self::StellarValueExt(Box::new(t)))),
             ),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => Box::new(
+                ReadXdrIter::<_, StellarValueProposedValue>::new(&mut r.inner, r.limits.clone())
+                    .map(|r| r.map(|t| Self::StellarValueProposedValue(Box::new(t)))),
+            ),
             TypeVariant::LedgerHeaderFlags => Box::new(
                 ReadXdrIter::<_, LedgerHeaderFlags>::new(&mut r.inner, r.limits.clone())
                     .map(|r| r.map(|t| Self::LedgerHeaderFlags(Box::new(t)))),
@@ -13763,12 +13767,10 @@ impl Type {
                 ReadXdrIter::<_, SorobanAddressCredentials>::new(&mut r.inner, r.limits.clone())
                     .map(|r| r.map(|t| Self::SorobanAddressCredentials(Box::new(t)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Box::new(
                 ReadXdrIter::<_, SorobanDelegateSignature>::new(&mut r.inner, r.limits.clone())
                     .map(|r| r.map(|t| Self::SorobanDelegateSignature(Box::new(t)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => Box::new(
                 ReadXdrIter::<_, SorobanAddressCredentialsWithDelegates>::new(
                     &mut r.inner,
@@ -13835,7 +13837,6 @@ impl Type {
                 )
                 .map(|r| r.map(|t| Self::HashIdPreimageSorobanAuthorization(Box::new(t)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => Box::new(
                 ReadXdrIter::<_, HashIdPreimageSorobanAuthorizationWithAddress>::new(
                     &mut r.inner,
@@ -15298,6 +15299,14 @@ impl Type {
                 ReadXdrIter::<_, Frame<StellarValueExt>>::new(&mut r.inner, r.limits.clone())
                     .map(|r| r.map(|t| Self::StellarValueExt(Box::new(t.0)))),
             ),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => Box::new(
+                ReadXdrIter::<_, Frame<StellarValueProposedValue>>::new(
+                    &mut r.inner,
+                    r.limits.clone(),
+                )
+                .map(|r| r.map(|t| Self::StellarValueProposedValue(Box::new(t.0)))),
+            ),
             TypeVariant::LedgerHeaderFlags => Box::new(
                 ReadXdrIter::<_, Frame<LedgerHeaderFlags>>::new(&mut r.inner, r.limits.clone())
                     .map(|r| r.map(|t| Self::LedgerHeaderFlags(Box::new(t.0)))),
@@ -16003,7 +16012,6 @@ impl Type {
                 )
                 .map(|r| r.map(|t| Self::SorobanAddressCredentials(Box::new(t.0)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Box::new(
                 ReadXdrIter::<_, Frame<SorobanDelegateSignature>>::new(
                     &mut r.inner,
@@ -16011,7 +16019,6 @@ impl Type {
                 )
                 .map(|r| r.map(|t| Self::SorobanDelegateSignature(Box::new(t.0)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => Box::new(
                 ReadXdrIter::<_, Frame<SorobanAddressCredentialsWithDelegates>>::new(
                     &mut r.inner,
@@ -16096,7 +16103,6 @@ impl Type {
                 )
                 .map(|r| r.map(|t| Self::HashIdPreimageSorobanAuthorization(Box::new(t.0)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => Box::new(
                 ReadXdrIter::<_, Frame<HashIdPreimageSorobanAuthorizationWithAddress>>::new(
                     &mut r.inner,
@@ -17542,6 +17548,11 @@ impl Type {
                 ReadXdrIter::<_, StellarValueExt>::new(dec, r.limits.clone())
                     .map(|r| r.map(|t| Self::StellarValueExt(Box::new(t)))),
             ),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => Box::new(
+                ReadXdrIter::<_, StellarValueProposedValue>::new(dec, r.limits.clone())
+                    .map(|r| r.map(|t| Self::StellarValueProposedValue(Box::new(t)))),
+            ),
             TypeVariant::LedgerHeaderFlags => Box::new(
                 ReadXdrIter::<_, LedgerHeaderFlags>::new(dec, r.limits.clone())
                     .map(|r| r.map(|t| Self::LedgerHeaderFlags(Box::new(t)))),
@@ -18113,12 +18124,10 @@ impl Type {
                 ReadXdrIter::<_, SorobanAddressCredentials>::new(dec, r.limits.clone())
                     .map(|r| r.map(|t| Self::SorobanAddressCredentials(Box::new(t)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Box::new(
                 ReadXdrIter::<_, SorobanDelegateSignature>::new(dec, r.limits.clone())
                     .map(|r| r.map(|t| Self::SorobanDelegateSignature(Box::new(t)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => Box::new(
                 ReadXdrIter::<_, SorobanAddressCredentialsWithDelegates>::new(
                     dec,
@@ -18182,7 +18191,6 @@ impl Type {
                 ReadXdrIter::<_, HashIdPreimageSorobanAuthorization>::new(dec, r.limits.clone())
                     .map(|r| r.map(|t| Self::HashIdPreimageSorobanAuthorization(Box::new(t)))),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => Box::new(
                 ReadXdrIter::<_, HashIdPreimageSorobanAuthorizationWithAddress>::new(
                     dec,
@@ -19250,6 +19258,10 @@ impl Type {
             TypeVariant::StellarValueExt => {
                 Ok(Self::StellarValueExt(Box::new(serde_json::from_reader(r)?)))
             }
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => Ok(Self::StellarValueProposedValue(
+                Box::new(serde_json::from_reader(r)?),
+            )),
             TypeVariant::LedgerHeaderFlags => Ok(Self::LedgerHeaderFlags(Box::new(
                 serde_json::from_reader(r)?,
             ))),
@@ -19652,11 +19664,9 @@ impl Type {
             TypeVariant::SorobanAddressCredentials => Ok(Self::SorobanAddressCredentials(
                 Box::new(serde_json::from_reader(r)?),
             )),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Ok(Self::SorobanDelegateSignature(Box::new(
                 serde_json::from_reader(r)?,
             ))),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => Ok(
                 Self::SorobanAddressCredentialsWithDelegates(Box::new(serde_json::from_reader(r)?)),
             ),
@@ -19700,7 +19710,6 @@ impl Type {
             TypeVariant::HashIdPreimageSorobanAuthorization => Ok(
                 Self::HashIdPreimageSorobanAuthorization(Box::new(serde_json::from_reader(r)?)),
             ),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => {
                 Ok(Self::HashIdPreimageSorobanAuthorizationWithAddress(
                     Box::new(serde_json::from_reader(r)?),
@@ -20652,6 +20661,10 @@ impl Type {
             TypeVariant::StellarValueExt => Ok(Self::StellarValueExt(Box::new(
                 serde::de::Deserialize::deserialize(r)?,
             ))),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => Ok(Self::StellarValueProposedValue(
+                Box::new(serde::de::Deserialize::deserialize(r)?),
+            )),
             TypeVariant::LedgerHeaderFlags => Ok(Self::LedgerHeaderFlags(Box::new(
                 serde::de::Deserialize::deserialize(r)?,
             ))),
@@ -21096,11 +21109,9 @@ impl Type {
             TypeVariant::SorobanAddressCredentials => Ok(Self::SorobanAddressCredentials(
                 Box::new(serde::de::Deserialize::deserialize(r)?),
             )),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Ok(Self::SorobanDelegateSignature(Box::new(
                 serde::de::Deserialize::deserialize(r)?,
             ))),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => {
                 Ok(Self::SorobanAddressCredentialsWithDelegates(Box::new(
                     serde::de::Deserialize::deserialize(r)?,
@@ -21150,7 +21161,6 @@ impl Type {
                     serde::de::Deserialize::deserialize(r)?,
                 )))
             }
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => {
                 Ok(Self::HashIdPreimageSorobanAuthorizationWithAddress(
                     Box::new(serde::de::Deserialize::deserialize(r)?),
@@ -22073,6 +22083,10 @@ impl Type {
             TypeVariant::StellarValueExt => Ok(Self::StellarValueExt(Box::new(
                 StellarValueExt::arbitrary(u)?,
             ))),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => Ok(Self::StellarValueProposedValue(
+                Box::new(StellarValueProposedValue::arbitrary(u)?),
+            )),
             TypeVariant::LedgerHeaderFlags => Ok(Self::LedgerHeaderFlags(Box::new(
                 LedgerHeaderFlags::arbitrary(u)?,
             ))),
@@ -22487,11 +22501,9 @@ impl Type {
             TypeVariant::SorobanAddressCredentials => Ok(Self::SorobanAddressCredentials(
                 Box::new(SorobanAddressCredentials::arbitrary(u)?),
             )),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Ok(Self::SorobanDelegateSignature(Box::new(
                 SorobanDelegateSignature::arbitrary(u)?,
             ))),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => {
                 Ok(Self::SorobanAddressCredentialsWithDelegates(Box::new(
                     SorobanAddressCredentialsWithDelegates::arbitrary(u)?,
@@ -22539,7 +22551,6 @@ impl Type {
                     HashIdPreimageSorobanAuthorization::arbitrary(u)?,
                 )))
             }
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => {
                 Ok(Self::HashIdPreimageSorobanAuthorizationWithAddress(
                     Box::new(HashIdPreimageSorobanAuthorizationWithAddress::arbitrary(u)?),
@@ -23171,6 +23182,10 @@ impl Type {
             }
             TypeVariant::StellarValue => Self::StellarValue(Box::default()),
             TypeVariant::StellarValueExt => Self::StellarValueExt(Box::default()),
+            #[cfg(feature = "cap_0083")]
+            TypeVariant::StellarValueProposedValue => {
+                Self::StellarValueProposedValue(Box::default())
+            }
             TypeVariant::LedgerHeaderFlags => Self::LedgerHeaderFlags(Box::default()),
             TypeVariant::LedgerHeaderExtensionV1 => Self::LedgerHeaderExtensionV1(Box::default()),
             TypeVariant::LedgerHeaderExtensionV1Ext => {
@@ -23367,9 +23382,7 @@ impl Type {
             TypeVariant::SorobanAddressCredentials => {
                 Self::SorobanAddressCredentials(Box::default())
             }
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanDelegateSignature => Self::SorobanDelegateSignature(Box::default()),
-            #[cfg(feature = "cap_0071")]
             TypeVariant::SorobanAddressCredentialsWithDelegates => {
                 Self::SorobanAddressCredentialsWithDelegates(Box::default())
             }
@@ -23395,7 +23408,6 @@ impl Type {
             TypeVariant::HashIdPreimageSorobanAuthorization => {
                 Self::HashIdPreimageSorobanAuthorization(Box::default())
             }
-            #[cfg(feature = "cap_0071")]
             TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress => {
                 Self::HashIdPreimageSorobanAuthorizationWithAddress(Box::default())
             }
@@ -23798,6 +23810,8 @@ impl Type {
             Self::LedgerCloseValueSignature(ref v) => v.as_ref(),
             Self::StellarValue(ref v) => v.as_ref(),
             Self::StellarValueExt(ref v) => v.as_ref(),
+            #[cfg(feature = "cap_0083")]
+            Self::StellarValueProposedValue(ref v) => v.as_ref(),
             Self::LedgerHeaderFlags(ref v) => v.as_ref(),
             Self::LedgerHeaderExtensionV1(ref v) => v.as_ref(),
             Self::LedgerHeaderExtensionV1Ext(ref v) => v.as_ref(),
@@ -23938,9 +23952,7 @@ impl Type {
             Self::SorobanAuthorizedFunction(ref v) => v.as_ref(),
             Self::SorobanAuthorizedInvocation(ref v) => v.as_ref(),
             Self::SorobanAddressCredentials(ref v) => v.as_ref(),
-            #[cfg(feature = "cap_0071")]
             Self::SorobanDelegateSignature(ref v) => v.as_ref(),
-            #[cfg(feature = "cap_0071")]
             Self::SorobanAddressCredentialsWithDelegates(ref v) => v.as_ref(),
             Self::SorobanCredentialsType(ref v) => v.as_ref(),
             Self::SorobanCredentials(ref v) => v.as_ref(),
@@ -23956,7 +23968,6 @@ impl Type {
             Self::HashIdPreimageRevokeId(ref v) => v.as_ref(),
             Self::HashIdPreimageContractId(ref v) => v.as_ref(),
             Self::HashIdPreimageSorobanAuthorization(ref v) => v.as_ref(),
-            #[cfg(feature = "cap_0071")]
             Self::HashIdPreimageSorobanAuthorizationWithAddress(ref v) => v.as_ref(),
             Self::MemoType(ref v) => v.as_ref(),
             Self::Memo(ref v) => v.as_ref(),
@@ -24289,6 +24300,8 @@ impl Type {
             Self::LedgerCloseValueSignature(_) => "LedgerCloseValueSignature",
             Self::StellarValue(_) => "StellarValue",
             Self::StellarValueExt(_) => "StellarValueExt",
+            #[cfg(feature = "cap_0083")]
+            Self::StellarValueProposedValue(_) => "StellarValueProposedValue",
             Self::LedgerHeaderFlags(_) => "LedgerHeaderFlags",
             Self::LedgerHeaderExtensionV1(_) => "LedgerHeaderExtensionV1",
             Self::LedgerHeaderExtensionV1Ext(_) => "LedgerHeaderExtensionV1Ext",
@@ -24439,9 +24452,7 @@ impl Type {
             Self::SorobanAuthorizedFunction(_) => "SorobanAuthorizedFunction",
             Self::SorobanAuthorizedInvocation(_) => "SorobanAuthorizedInvocation",
             Self::SorobanAddressCredentials(_) => "SorobanAddressCredentials",
-            #[cfg(feature = "cap_0071")]
             Self::SorobanDelegateSignature(_) => "SorobanDelegateSignature",
-            #[cfg(feature = "cap_0071")]
             Self::SorobanAddressCredentialsWithDelegates(_) => {
                 "SorobanAddressCredentialsWithDelegates"
             }
@@ -24459,7 +24470,6 @@ impl Type {
             Self::HashIdPreimageRevokeId(_) => "HashIdPreimageRevokeId",
             Self::HashIdPreimageContractId(_) => "HashIdPreimageContractId",
             Self::HashIdPreimageSorobanAuthorization(_) => "HashIdPreimageSorobanAuthorization",
-            #[cfg(feature = "cap_0071")]
             Self::HashIdPreimageSorobanAuthorizationWithAddress(_) => {
                 "HashIdPreimageSorobanAuthorizationWithAddress"
             }
@@ -24820,6 +24830,8 @@ impl Type {
             Self::LedgerCloseValueSignature(_) => TypeVariant::LedgerCloseValueSignature,
             Self::StellarValue(_) => TypeVariant::StellarValue,
             Self::StellarValueExt(_) => TypeVariant::StellarValueExt,
+            #[cfg(feature = "cap_0083")]
+            Self::StellarValueProposedValue(_) => TypeVariant::StellarValueProposedValue,
             Self::LedgerHeaderFlags(_) => TypeVariant::LedgerHeaderFlags,
             Self::LedgerHeaderExtensionV1(_) => TypeVariant::LedgerHeaderExtensionV1,
             Self::LedgerHeaderExtensionV1Ext(_) => TypeVariant::LedgerHeaderExtensionV1Ext,
@@ -24982,9 +24994,7 @@ impl Type {
             Self::SorobanAuthorizedFunction(_) => TypeVariant::SorobanAuthorizedFunction,
             Self::SorobanAuthorizedInvocation(_) => TypeVariant::SorobanAuthorizedInvocation,
             Self::SorobanAddressCredentials(_) => TypeVariant::SorobanAddressCredentials,
-            #[cfg(feature = "cap_0071")]
             Self::SorobanDelegateSignature(_) => TypeVariant::SorobanDelegateSignature,
-            #[cfg(feature = "cap_0071")]
             Self::SorobanAddressCredentialsWithDelegates(_) => {
                 TypeVariant::SorobanAddressCredentialsWithDelegates
             }
@@ -25004,7 +25014,6 @@ impl Type {
             Self::HashIdPreimageSorobanAuthorization(_) => {
                 TypeVariant::HashIdPreimageSorobanAuthorization
             }
-            #[cfg(feature = "cap_0071")]
             Self::HashIdPreimageSorobanAuthorizationWithAddress(_) => {
                 TypeVariant::HashIdPreimageSorobanAuthorizationWithAddress
             }
@@ -25372,6 +25381,8 @@ impl WriteXdr for Type {
             Self::LedgerCloseValueSignature(v) => v.write_xdr(w),
             Self::StellarValue(v) => v.write_xdr(w),
             Self::StellarValueExt(v) => v.write_xdr(w),
+            #[cfg(feature = "cap_0083")]
+            Self::StellarValueProposedValue(v) => v.write_xdr(w),
             Self::LedgerHeaderFlags(v) => v.write_xdr(w),
             Self::LedgerHeaderExtensionV1(v) => v.write_xdr(w),
             Self::LedgerHeaderExtensionV1Ext(v) => v.write_xdr(w),
@@ -25512,9 +25523,7 @@ impl WriteXdr for Type {
             Self::SorobanAuthorizedFunction(v) => v.write_xdr(w),
             Self::SorobanAuthorizedInvocation(v) => v.write_xdr(w),
             Self::SorobanAddressCredentials(v) => v.write_xdr(w),
-            #[cfg(feature = "cap_0071")]
             Self::SorobanDelegateSignature(v) => v.write_xdr(w),
-            #[cfg(feature = "cap_0071")]
             Self::SorobanAddressCredentialsWithDelegates(v) => v.write_xdr(w),
             Self::SorobanCredentialsType(v) => v.write_xdr(w),
             Self::SorobanCredentials(v) => v.write_xdr(w),
@@ -25530,7 +25539,6 @@ impl WriteXdr for Type {
             Self::HashIdPreimageRevokeId(v) => v.write_xdr(w),
             Self::HashIdPreimageContractId(v) => v.write_xdr(w),
             Self::HashIdPreimageSorobanAuthorization(v) => v.write_xdr(w),
-            #[cfg(feature = "cap_0071")]
             Self::HashIdPreimageSorobanAuthorizationWithAddress(v) => v.write_xdr(w),
             Self::MemoType(v) => v.write_xdr(w),
             Self::Memo(v) => v.write_xdr(w),
