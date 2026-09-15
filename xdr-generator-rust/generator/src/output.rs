@@ -1,21 +1,16 @@
 use askama::Template;
 
-#[allow(dead_code)]
-#[derive(Template)]
-#[template(path = "generated.rs.jinja", escape = "none")]
-pub struct GeneratedTemplate {
-    pub xdr_files_sha256: Vec<(String, String)>,
-    pub header: String,
-    pub definitions: Vec<DefinitionOutput>,
-    pub type_variant_enum: TypeEnumOutput,
-}
-
 #[derive(Template)]
 #[template(path = "mod.rs.jinja", escape = "none")]
 pub struct ModTemplate {
     pub xdr_files_sha256: Vec<(String, String)>,
     pub header: String,
     pub modules: Vec<ModuleEntry>,
+}
+
+#[derive(Template)]
+#[template(path = "type_enum_definition.rs.jinja", escape = "none")]
+pub struct TypeEnumDefinitionTemplate {
     pub type_variant_enum: TypeEnumOutput,
 }
 
@@ -53,6 +48,9 @@ pub struct StructMemberOutput {
     pub type_ref: String,
     pub turbofish_type: String,
     pub serde_as_type: Option<String>,
+    /// The correct SEP-51 JSON key when the Rust field name was keyword-escaped
+    /// (e.g. `type_` -> JSON `type`). `None` when the name was not escaped.
+    pub serde_rename: Option<String>,
 }
 
 pub struct EnumOutput {
@@ -101,6 +99,9 @@ pub struct TypedefAliasOutput {
     pub cfg: Option<String>,
 }
 
+// A flat carrier for the newtype template's fields; each bool switches on one
+// independent piece of the rendered output, so they do not collapse into an enum.
+#[allow(clippy::struct_excessive_bools)]
 pub struct TypedefNewtypeOutput {
     pub name: String,
     pub source_comment: String,

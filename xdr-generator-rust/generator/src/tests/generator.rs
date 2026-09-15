@@ -1,4 +1,3 @@
-use askama::Template;
 use std::collections::HashSet;
 
 use crate::generator::RustGenerator;
@@ -12,8 +11,16 @@ fn generate_from_xdr(xdr: &str) -> String {
         no_display_fromstr: HashSet::new(),
     };
     let generator = RustGenerator::new(&spec, options);
-    let template = generator.generate(&spec, "// header\n");
-    template.render().unwrap()
+    let mut output = String::new();
+    let module_file = std::path::Path::new("generated.rs");
+    let output_dir = std::path::Path::new("generated");
+    generator
+        .generate_files(&spec, module_file, output_dir, |_, contents| {
+            output.push_str(contents);
+            Ok(())
+        })
+        .unwrap();
+    output
 }
 
 fn assert_contains(output: &str, expected: &str) {
@@ -26,11 +33,11 @@ fn assert_contains(output: &str, expected: &str) {
 #[test]
 fn test_ifdef_generates_cfg_on_struct() {
     let output = generate_from_xdr(
-        r#"
+        r"
         #ifdef FEATURE_X
         struct Foo { int x; };
         #endif
-    "#,
+    ",
     );
     assert_contains(
         &output,
@@ -63,13 +70,13 @@ impl WriteXdr for Foo {"#,
 #[test]
 fn test_ifdef_else_generates_both_cfgs() {
     let output = generate_from_xdr(
-        r#"
+        r"
         #ifdef FEATURE_X
         struct Foo { int x; };
         #else
         struct Bar { int y; };
         #endif
-    "#,
+    ",
     );
     assert_contains(
         &output,
@@ -108,13 +115,13 @@ pub struct Bar {"#,
 #[test]
 fn test_ifdef_same_name_both_branches() {
     let output = generate_from_xdr(
-        r#"
+        r"
         #ifdef FEATURE_X
         struct Foo { int x; };
         #else
         struct Foo { int y; };
         #endif
-    "#,
+    ",
     );
     assert_contains(
         &output,
@@ -152,21 +159,25 @@ pub struct Foo {
     pub y: i32,
 }"#,
     );
-    // Same name in both branches: TypeVariant entry has no cfg
-    assert_contains(&output, "pub enum TypeVariant {\n    Foo,\n}");
+    // Same name in both branches: TypeVariant entry has no per-branch cfg,
+    // but the whole type enum API is behind the `type_enum` feature.
+    assert_contains(
+        &output,
+        "#[cfg(feature = \"type_enum\")]\n#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]",
+    );
 }
 
 #[test]
 fn test_ifdef_inline_enum_member_cfg() {
     let output = generate_from_xdr(
-        r#"
+        r"
         enum Color {
             RED = 0,
             #ifdef FEATURE_X
             GREEN = 1
             #endif
         };
-    "#,
+    ",
     );
     assert_contains(
         &output,
@@ -192,15 +203,15 @@ fn test_ifdef_inline_enum_member_cfg() {
 #[test]
 fn test_ifdef_generates_cfg_on_const() {
     let output = generate_from_xdr(
-        r#"
+        r"
         #ifdef FEATURE_X
         const MAX_SIZE = 100;
         #endif
-    "#,
+    ",
     );
     assert_contains(
         &output,
         r#"#[cfg(feature = "feature_x")]
-pub const MAX_SIZE: u64 = 100;"#,
+pub const MAX_SIZE: u32 = 100;"#,
     );
 }
